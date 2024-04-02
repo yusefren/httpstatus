@@ -27,7 +27,7 @@ public class StatusController : Controller {
     public IActionResult StatusCode(int statusCode, int? sleep, bool? suppressBody) {
         var statusData = _statusCodes.ContainsKey(statusCode)
             ? _statusCodes[statusCode]
-            : new TeapotStatusCodeResult { Description = $"{statusCode} Unknown Code" };
+            : new TeapotStatusCodeResult { Description = $"Unknown Code" };
 
         sleep ??= FindSleepInHeader();
         suppressBody ??= FindSuppressBodyInHeader();

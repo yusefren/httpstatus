@@ -121,4 +121,32 @@ public class CustomHttpStatusCodeResultTests
             Assert.That(_httpContext.Response.ContentLength, Is.Null);
         });
     }
+
+    [Test]
+    public async Task Unknwon_Response_Is_Correct() {
+        var targetCode = 999;
+        var expectedCode  = 999;
+        var expectedResponse = "999 Unknown Code";
+
+         var statusCodeResult = new TeapotStatusCodeResult
+        {
+            Description = "Unknown Code"
+        };
+
+        var target = new CustomHttpStatusCodeResult(targetCode, statusCodeResult, null, null, new());
+
+        await target.ExecuteResultAsync(_mockActionContext.Object);
+        Assert.Multiple(() => {
+            Assert.That(_httpContext.Response.StatusCode, Is.EqualTo(expectedCode));
+            Assert.That(_httpContext.Response.ContentType, Is.EqualTo("text/plain"));
+            Assert.That(_httpResponseFeature.ReasonPhrase, Is.EqualTo(statusCodeResult.Description));
+        });
+        _body.Position = 0;
+        var sr = new StreamReader(_body);
+        var body = sr.ReadToEnd();
+        Assert.Multiple(() => {
+            Assert.That(body, Is.EqualTo(expectedResponse));
+            Assert.That(_httpContext.Response.ContentLength, Is.EqualTo(body.Length));
+        });
+    }
 }
